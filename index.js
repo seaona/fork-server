@@ -4,6 +4,9 @@ const {
     stopServer,
 } = require('./anvil/network-configs/mainnet')
 const LocalNetwork = require('./anvil/anvil-setup');
+require('dotenv').config()
+
+const adminToken = process.env.ADMIN_TOKEN; 
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -21,26 +24,37 @@ const options = {
 app.use(express.json());
 
 app.post("/start-server", async (req, res) => {
-    try {
-    anvil = new LocalNetwork();
-    await anvil.start(options);
-    res.status(200).send("Anvil server started successfully");
-    console.log('Anvil server started successfully.');
-    } catch (error) {
-      console.error("Error starting server:", error);
-      res.status(500).send("Internal server error.");
+    const { token } = req.body;
+
+    if (token !== adminToken) {
+        return res.status(401).send("Unauthorized");
+    } else {
+        try {
+            anvil = new LocalNetwork();
+            await anvil.start(options);
+            res.status(200).send("Anvil server started successfully");
+            console.log('Anvil server started successfully.');
+        } catch (error) {
+          console.error("Error starting server:", error);
+          res.status(500).send("Internal server error.");
+        }
     }
 });
 
 app.post("/stop-server", async (req, res) => {
-    try {
-      await stopServer(anvil);
-      res.status(200).send("Server stopped successfully.");
-    } catch (error) {
-      console.error("Error stopping server:", error);
-      res.status(500).send("Internal server error.");
-    }
-  });
+    const { token } = req.body;
+    if (token !== adminToken) {
+        return res.status(401).send("Unauthorized");
+    } else {
+        try {
+        await stopServer(anvil);
+        res.status(200).send("Server stopped successfully.");
+        } catch (error) {
+        console.error("Error stopping server:", error);
+        res.status(500).send("Internal server error.");
+        }
+        }
+    });
 
 app.post("/seed-address", async (req, res) => {
   try {

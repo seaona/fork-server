@@ -1,2 +1,3 @@
 node_modules
 anvil/contract-layouts
+.env

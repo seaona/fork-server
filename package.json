@@ -12,6 +12,7 @@
     "@ethersproject/keccak256": "^5.7.0",
     "@viem/anvil": "^0.0.10",
     "child_process": "^1.0.2",
+    "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "viem": "^2.10.1"
   }
